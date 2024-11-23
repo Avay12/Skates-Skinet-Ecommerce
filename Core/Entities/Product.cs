@@ -14,7 +14,7 @@ namespace Core.Entities
 
         public decimal Price { get; set; }
 
-        public required decimal PictureUrl { get; set; }
+        public required string PictureUrl { get; set; }
 
         public required string Type { get; set; }
 
