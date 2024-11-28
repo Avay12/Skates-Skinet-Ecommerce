@@ -13,9 +13,9 @@ namespace API.Controllers
     {
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
+        public async Task<ActionResult<IEnumerable<Product>>> GetProducts(string? brand, string? type, string? sort)
         {
-            return Ok(await _repo.GetProductsAsync());
+            return Ok(await _repo.GetProductsAsync(brand, type, sort));
         }
 
         [HttpGet("{id:int}")]
@@ -68,6 +68,19 @@ namespace API.Controllers
             return NoContent();
             
         }
+
+        [HttpGet("brands")]
+        public async Task<ActionResult<IReadOnlyList<string>>> GetBrands()
+        {
+            return Ok(await _repo.GetBrandsAsync());
+        }
+        
+        [HttpGet("types")]
+        public async Task<ActionResult<IReadOnlyList<string>>> GetTypes()
+        {
+            return Ok(await _repo.GetTypesAsync());
+        }
+
 
         private bool ProductExists(int id)
         {
