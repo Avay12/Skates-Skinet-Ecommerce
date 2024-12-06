@@ -54,7 +54,7 @@ namespace Infrastructure.Data
 
             var selectQuery = query as IQueryable<TResult>;
 
-            if (selectQuery != null)
+            if (spec.Select != null)
             {
                 selectQuery = query.Select(spec.Select);
             }

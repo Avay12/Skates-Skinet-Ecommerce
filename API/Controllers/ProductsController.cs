@@ -79,7 +79,8 @@ namespace API.Controllers
         {
             var spec = new BrandListSpecification();
 
-            return Ok(await _repo.ListAsync(spec));
+            var brands = await _repo.ListAsync(spec);
+            return Ok(brands);
         }
         
         [HttpGet("types")]
