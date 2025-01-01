@@ -7,8 +7,8 @@
     </h2>
     <p class="font-light">{{product.price | currency}}</p>
   </mat-card-content>
-  <mat-card-content>
-    <button mat-stroked-button class="w-full">
+  <mat-card-content (click)="$event.stopPropagation()">
+    <button mat-stroked-button class="w-full" (click)="cartService.addItemToCart(product)">
       <mat-icon>add_shopping_cart</mat-icon>
       Add to cart
     </button>
