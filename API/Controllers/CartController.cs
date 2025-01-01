@@ -34,7 +34,7 @@ namespace API.Controllers
 
             if (!result) return BadRequest("Problem Deleting cart");
 
-            return Ok(result);
+            return Ok();
         }
     }
 }
