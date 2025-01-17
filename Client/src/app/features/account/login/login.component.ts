@@ -25,15 +25,15 @@ export class LoginComponent {
   private accountService = inject(AccountService);
   private router = inject(Router);
 
-  loginFrom = this.fb.group({
+  loginForm = this.fb.group({
     email: [''],
     password: [''],
   });
 
   onSubmit() {
-    this.accountService.login(this.loginFrom.value).subscribe({
+    this.accountService.login(this.loginForm.value).subscribe({
       next: () => {
-        this.accountService.getUserInfo();
+        this.accountService.getUserInfo().subscribe();
         this.router.navigateByUrl('/shop');
       },
     });
