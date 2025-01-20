@@ -79,6 +79,7 @@ export class CartService {
         localStorage.removeItem('cart_id');
         this.cart.set(null);
       },
+      error: (err) => console.log(err.message),
     });
   }
 
