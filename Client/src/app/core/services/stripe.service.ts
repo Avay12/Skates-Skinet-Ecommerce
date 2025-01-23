@@ -4,7 +4,6 @@ import {
   Stripe,
   StripeAddressElement,
   StripeAddressElementOptions,
-  StripeElement,
   StripeElements,
 } from '@stripe/stripe-js';
 import { environment } from '../../../environments/environment';
