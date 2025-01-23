@@ -15,7 +15,6 @@ namespace API.Controllers
         {
             var spec = new ProductSpecification(specParams);
 
-
             return await CreatePagedResult(_repo, spec, specParams.PageIndex, specParams.PageSize);
         }
 
