@@ -45,7 +45,7 @@ namespace Infrastructure.Services
 
                 if(string.IsNullOrEmpty(cart.PaymentIntentId))
                 {
-                    var options = new PaymentIntentCreateOptions
+                var options = new PaymentIntentCreateOptions
                     {
                         Amount = (long)cart.Items.Sum(x=>x.Quantity *(x.Price*100)) + (long)shippingPrice * 100,
                         Currency = "usd",
