@@ -3,7 +3,7 @@ import { OrderSummaryComponent } from '../../shared/components/order-summary/ord
 import { MatStepperModule } from '@angular/material/stepper';
 import { RouterLink } from '@angular/router';
 import { StripeService } from '../../core/services/stripe.service';
-import { StripeAddressElement } from '@stripe/stripe-js';
+import { StripeAddressElement, StripePaymentElement } from '@stripe/stripe-js';
 import { SnackbarService } from '../../core/services/snackbar.service';
 import { MatButton } from '@angular/material/button';
 import {
@@ -34,12 +34,16 @@ export class CheckoutComponent implements OnInit, OnDestroy {
   private accountService = inject(AccountService);
   private snackbar = inject(SnackbarService);
   addressElement?: StripeAddressElement;
+  paymentElement?: StripePaymentElement;
   saveAddress = false;
 
   async ngOnInit() {
     try {
       this.addressElement = await this.stripeService.createAddressElement();
       this.addressElement.mount('#address-element');
+
+      this.paymentElement = await this.stripeService.CreatePaymentElement();
+      this.paymentElement.mount('#payment-element');
     } catch (error: any) {
       this.snackbar.error(error.message);
     }
