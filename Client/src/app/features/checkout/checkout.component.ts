@@ -1,9 +1,15 @@
-import { Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { OrderSummaryComponent } from '../../shared/components/order-summary/order-summary.component';
-import { MatStepperModule } from '@angular/material/stepper';
-import { RouterLink } from '@angular/router';
+import { MatStepper, MatStepperModule } from '@angular/material/stepper';
+import { Router, RouterLink } from '@angular/router';
 import { StripeService } from '../../core/services/stripe.service';
-import { StripeAddressElement, StripePaymentElement } from '@stripe/stripe-js';
+import {
+  ConfirmationToken,
+  StripeAddressElement,
+  StripeAddressElementChangeEvent,
+  StripePaymentElement,
+  StripePaymentElementChangeEvent,
+} from '@stripe/stripe-js';
 import { SnackbarService } from '../../core/services/snackbar.service';
 import { MatButton } from '@angular/material/button';
 import {
@@ -38,18 +44,69 @@ export class CheckoutComponent implements OnInit, OnDestroy {
   private stripeService = inject(StripeService);
   private accountService = inject(AccountService);
   private snackbar = inject(SnackbarService);
+  private router = inject(Router);
   cartService = inject(CartService);
   addressElement?: StripeAddressElement;
   paymentElement?: StripePaymentElement;
   saveAddress = false;
+  completionStatus = signal<{
+    address: boolean;
+    card: boolean;
+    delivery: boolean;
+  }>({
+    address: false,
+    card: false,
+    delivery: false,
+  });
+  confrimationToken?: ConfirmationToken;
 
   async ngOnInit() {
     try {
       this.addressElement = await this.stripeService.createAddressElement();
       this.addressElement.mount('#address-element');
+      this.addressElement.on('change', this.handleAddressChange);
 
       this.paymentElement = await this.stripeService.CreatePaymentElement();
       this.paymentElement.mount('#payment-element');
+      this.paymentElement.on('change', this.handlePaymentChange);
+    } catch (error: any) {
+      this.snackbar.error(error.message);
+    }
+  }
+
+  handleAddressChange = (event: StripeAddressElementChangeEvent) => {
+    this.completionStatus.update((state) => {
+      state.address = event.complete;
+      return state;
+    });
+  };
+
+  handlePaymentChange = (event: StripePaymentElementChangeEvent) => {
+    this.completionStatus.update((state) => {
+      state.card = event.complete;
+      return state;
+    });
+  };
+
+  handleDeliveryChange(event: boolean) {
+    this.completionStatus.update((state) => {
+      state.delivery = event;
+      return state;
+    });
+  }
+
+  async getConfirmationToken() {
+    try {
+      if (
+        Object.values(this.completionStatus()).every(
+          (status) => status === true
+        )
+      ) {
+        const result = await this.stripeService.createConfirmationToken();
+        if (result.error) throw new Error(result.error.message);
+        this.confrimationToken = result.confirmationToken;
+        console.log(this.confrimationToken);
+      }
     } catch (error: any) {
       this.snackbar.error(error.message);
     }
@@ -64,6 +121,30 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     }
     if (event.selectedIndex === 2) {
       await firstValueFrom(this.stripeService.createOrUpdatePaymentIntent());
+    }
+    if (event.selectedIndex === 3) {
+      await this.getConfirmationToken();
+    }
+  }
+
+  async confirmPayment(stepper: MatStepper) {
+    try {
+      if (this.confrimationToken) {
+        const result = await this.stripeService.confirmPayment(
+          this.confrimationToken
+        );
+        if (result.error) {
+          throw Error(result.error.message);
+        } else {
+          this.cartService.deleteCart();
+          this.cartService.selectedDelivery.set(null);
+          this.router.navigateByUrl('checkout/success');
+        }
+      }
+    } catch (error: any) {
+      this.snackbar.error(error.message || 'Something went wrong');
+      console.log(error);
+      stepper.previous();
     }
   }
 
