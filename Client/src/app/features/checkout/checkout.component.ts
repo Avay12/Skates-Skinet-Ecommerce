@@ -24,6 +24,7 @@ import { CheckoutDeliveryComponent } from './checkout-delivery/checkout-delivery
 import { CheckoutReviewComponent } from './checkout-review/checkout-review.component';
 import { CurrencyPipe } from '@angular/common';
 import { CartService } from '../../core/services/cart.service';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-checkout',
@@ -36,6 +37,7 @@ import { CartService } from '../../core/services/cart.service';
     CheckoutDeliveryComponent,
     CheckoutReviewComponent,
     CurrencyPipe,
+    MatProgressSpinnerModule,
   ],
   templateUrl: './checkout.component.html',
   styleUrl: './checkout.component.scss',
@@ -59,6 +61,7 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     delivery: false,
   });
   confrimationToken?: ConfirmationToken;
+  loading = false;
 
   async ngOnInit() {
     try {
@@ -128,6 +131,7 @@ export class CheckoutComponent implements OnInit, OnDestroy {
   }
 
   async confirmPayment(stepper: MatStepper) {
+    this.loading = true;
     try {
       if (this.confrimationToken) {
         const result = await this.stripeService.confirmPayment(
@@ -145,6 +149,8 @@ export class CheckoutComponent implements OnInit, OnDestroy {
       this.snackbar.error(error.message || 'Something went wrong');
       console.log(error);
       stepper.previous();
+    } finally {
+      this.loading = false;
     }
   }
 
