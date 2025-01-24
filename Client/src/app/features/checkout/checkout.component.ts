@@ -15,6 +15,9 @@ import { firstValueFrom } from 'rxjs';
 import { AccountService } from '../../core/services/account.service';
 import { Address } from '../../shared/models/user';
 import { CheckoutDeliveryComponent } from './checkout-delivery/checkout-delivery.component';
+import { CheckoutReviewComponent } from './checkout-review/checkout-review.component';
+import { CurrencyPipe } from '@angular/common';
+import { CartService } from '../../core/services/cart.service';
 
 @Component({
   selector: 'app-checkout',
@@ -25,6 +28,8 @@ import { CheckoutDeliveryComponent } from './checkout-delivery/checkout-delivery
     RouterLink,
     MatCheckboxModule,
     CheckoutDeliveryComponent,
+    CheckoutReviewComponent,
+    CurrencyPipe,
   ],
   templateUrl: './checkout.component.html',
   styleUrl: './checkout.component.scss',
@@ -33,6 +38,7 @@ export class CheckoutComponent implements OnInit, OnDestroy {
   private stripeService = inject(StripeService);
   private accountService = inject(AccountService);
   private snackbar = inject(SnackbarService);
+  cartService = inject(CartService);
   addressElement?: StripeAddressElement;
   paymentElement?: StripePaymentElement;
   saveAddress = false;
