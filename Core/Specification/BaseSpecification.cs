@@ -26,6 +26,10 @@ namespace Core.Specification
 
         public bool IsPagingEnabled { get; private set; }
 
+        public List<Expression<Func<T, object>>> Includes { get; } = [];
+
+        public List<string> IncludeStrings { get; } = [];
+
         public IQueryable<T> ApplyCriteria(IQueryable<T> query)
         {
             if(Criteria != null)
@@ -33,6 +37,16 @@ namespace Core.Specification
                 query = query.Where(Criteria);
             }
             return query;
+        }
+
+        public void AddInclude(Expression<Func<T,object>> includeExpressions)
+        {
+            Includes.Add(includeExpressions);
+        }
+
+        public void AddInclude(string includeString)
+        {
+            IncludeStrings.Add(includeString); // For ThenInclude
         }
 
         protected void AddOrderBy(Expression<Func<T, object>> orderByExpression)
