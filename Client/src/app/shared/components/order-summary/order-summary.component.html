@@ -7,21 +7,21 @@
       <div class="space-y-2">
         <dl class="flex items-center justify-between gap-4">
           <dt class="font-medium text-gray-500">Subtotal</dt>
-          <dt class="font-medium text-gray-900">{{cartService.totals()?.subtotal | currency}}</dt>
+          <dd class="font-medium text-gray-900">{{cartService.totals()?.subtotal | currency}}</dd>
         </dl>
         <dl class="flex items-center justify-between gap-4">
           <dt class="font-medium text-gray-500">Discount</dt>
-          <dt class="font-medium text-green-500">-{{cartService.totals()?.discount | currency}}</dt>
+          <dd class="font-medium text-green-500">-{{cartService.totals()?.discount | currency}}</dd>
         </dl>
         <dl class="flex items-center justify-between gap-4">
           <dt class="font-medium text-gray-500">Delivery fee</dt>
-          <dt class="font-medium text-gray-900">{{cartService.totals()?.shipping | currency}}</dt>
+          <dd class="font-medium text-gray-900">{{cartService.totals()?.shipping | currency}}</dd>
         </dl>
       </div>
 
       <dl class="flex items-center justify-between gap-4 border-t border-gray-200 pt-2">
         <dt class="font-medium text-gray-500">Total</dt>
-        <dt class="font-medium text-gray-900">{{cartService.totals()?.total | currency }}</dt>
+        <dd class="font-medium text-gray-900">{{cartService.totals()?.total | currency }}</dd>
       </dl>
     </div>
 
