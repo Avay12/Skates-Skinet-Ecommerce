@@ -11,8 +11,8 @@ import {
 import { environment } from '../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { CartService } from './cart.service';
-import { firstValueFrom, map } from 'rxjs';
 import { Cart } from '../../shared/models/cart';
+import { firstValueFrom, map } from 'rxjs';
 import { AccountService } from './account.service';
 
 @Injectable({
@@ -20,8 +20,8 @@ import { AccountService } from './account.service';
 })
 export class StripeService {
   baseUrl = environment.apiUrl;
-  private accountService = inject(AccountService);
   private cartService = inject(CartService);
+  private accountService = inject(AccountService);
   private http = inject(HttpClient);
   private stripePromise: Promise<Stripe | null>;
   private elements?: StripeElements;
@@ -31,6 +31,7 @@ export class StripeService {
   constructor() {
     this.stripePromise = loadStripe(environment.stripePublicKey);
   }
+
   getStripeInstance() {
     return this.stripePromise;
   }
@@ -51,7 +52,7 @@ export class StripeService {
     return this.elements;
   }
 
-  async CreatePaymentElement() {
+  async createPaymentElement() {
     if (!this.paymentElement) {
       const elements = await this.initializeElements();
       if (elements) {
@@ -73,6 +74,7 @@ export class StripeService {
         if (user) {
           defaultValues.name = user.firstName + ' ' + user.lastName;
         }
+
         if (user?.address) {
           defaultValues.address = {
             line1: user.address.line1,
@@ -83,6 +85,7 @@ export class StripeService {
             postal_code: user.address.postalCode,
           };
         }
+
         const options: StripeAddressElementOptions = {
           mode: 'shipping',
           defaultValues,
@@ -107,7 +110,7 @@ export class StripeService {
     }
   }
 
-  async confirmPayment(ConfirmationToken: ConfirmationToken) {
+  async confirmPayment(confirmationToken: ConfirmationToken) {
     const stripe = await this.getStripeInstance();
     const elements = await this.initializeElements();
     const result = await elements.submit();
@@ -117,9 +120,9 @@ export class StripeService {
 
     if (stripe && clientSecret) {
       return await stripe.confirmPayment({
-        clientSecret,
+        clientSecret: clientSecret,
         confirmParams: {
-          confirmation_token: ConfirmationToken.id,
+          confirmation_token: confirmationToken.id,
         },
         redirect: 'if_required',
       });
@@ -139,7 +142,7 @@ export class StripeService {
     );
   }
 
-  disposeElement() {
+  disposeElements() {
     this.elements = undefined;
     this.addressElement = undefined;
     this.paymentElement = undefined;

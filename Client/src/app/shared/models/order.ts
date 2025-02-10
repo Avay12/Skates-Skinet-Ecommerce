@@ -42,5 +42,5 @@ export interface OrderToCreate {
   cartId: string;
   deliveryMethodId: number;
   shippingAddress: ShippingAddress;
-  PaymentSummary: PaymentSummary;
+  paymentSummary: PaymentSummary;
 }
